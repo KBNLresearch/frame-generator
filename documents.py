@@ -3,6 +3,8 @@
 
 import csv
 import gensim
+import io
+import json
 import os
 import re
 import sys
@@ -103,6 +105,11 @@ class DocumentReader(object):
                                     tokenizer.word_tokenizer(sentence)]
                     docs.append(tokens)
 
+        for filename in [f for f in os.listdir(path) if f.endswith('.json')]:
+            with open(path + '/' + filename) as f:
+                print('Processing file: ' + filename)
+                docs += json.load(f)['docs']
+
         print('Number of (sub)documents: ' + str(len(docs)))
         return docs
 
@@ -173,4 +180,11 @@ class DocumentReader(object):
             except UnicodeDecodeError:
                 continue
         return decoded
+
+
+    def save_docs(self, output_dir):
+        data = {'docs': self.doc_list}
+        with io.open(output_dir + os.sep + 'docs.json', 'w',
+                encoding='utf-8') as f:
+            f.write(unicode(json.dumps(data, ensure_ascii=False)))
 

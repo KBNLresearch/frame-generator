@@ -43,6 +43,7 @@ def generate(gtype='frames', dlen=0, pos=True, tcount=10, tsize=10, mallet=None,
 
     # Generate document list, dictionary and corpus
     doc_reader = documents.DocumentReader(input_dir, dlen, pos)
+    doc_reader.save_docs(output_dir)
 
     # Generate only topics
     if gtype == 'topics':
