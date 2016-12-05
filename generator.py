@@ -39,16 +39,19 @@ def generate(gtype='frames', dlen=0, pos=True, tcount=10, tsize=10, mallet=None,
         os.makedirs(output_dir)
 
     # Save settings
-    save_settings(locals(), output_dir)
+    if output_dir:
+        save_settings(locals(), output_dir)
 
     # Generate document list, dictionary and corpus
     doc_reader = documents.DocumentReader(input_dir, dlen, pos)
-    doc_reader.save_docs(output_dir)
+    if output_dir:
+        doc_reader.save_docs(output_dir)
 
     # Generate only topics
     if gtype == 'topics':
         topic_list = models.TopicList(doc_reader, tcount, tsize, mallet)
-        topic_list.save_topics(output_dir)
+        if output_dir:
+            topic_list.save_topics(output_dir)
         return topic_list, None, None
 
     # Generate keywords based on tf-idf scores
@@ -56,15 +59,18 @@ def generate(gtype='frames', dlen=0, pos=True, tcount=10, tsize=10, mallet=None,
         tfidf_list = models.TfIdfList(doc_reader)
         keyword_list = keywords.KeywordList(doc_reader, kcount, ktags,
                 tfidf_list=tfidf_list)
-        keyword_list.save_keywords(output_dir)
+        if output_dir:
+            keyword_list.save_keywords(output_dir)
 
     # Generate keywords based on topics
     else:
         topic_list = models.TopicList(doc_reader, tcount, tsize, mallet)
-        topic_list.save_topics(output_dir)
+        if output_dir:
+            topic_list.save_topics(output_dir)
         keyword_list = keywords.KeywordList(doc_reader, kcount, ktags,
                 topic_list=topic_list)
-        keyword_list.save_keywords(output_dir)
+        if output_dir:
+            keyword_list.save_keywords(output_dir)
 
     # Generate only keywords
     if gtype == 'keywords':
@@ -74,7 +80,8 @@ def generate(gtype='frames', dlen=0, pos=True, tcount=10, tsize=10, mallet=None,
     else:
         frame_list = frames.FrameList(doc_reader, keyword_list, wdir, wsize,
                 fsize, ftags)
-        frame_list.save_frames(output_dir)
+        if output_dir:
+            frame_list.save_frames(output_dir)
         return None, keyword_list, frame_list
 
 

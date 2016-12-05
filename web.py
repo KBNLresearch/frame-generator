@@ -2,33 +2,31 @@
 # -*- coding: utf-8 -*-
 
 import generator
+import json
 import os
+import shutil
 import time
 
-from bottle import get, post, request, route, run, template
-
-@get('/')
-def index():
-    return template('web' + os.sep + 'index')
+from bottle import post, request, route, run
 
 @post('/')
-def result():
+def index():
+
     input_dir = 'input' + os.sep + str(int(time.time()))
     os.makedirs(input_dir)
-    output_dir = 'output' + os.sep + str(int(time.time()))
-    os.makedirs(output_dir)
 
     doc_dir = input_dir + os.sep + 'docs'
     os.makedirs(doc_dir)
-    doc_files = request.files.getall('doc_files')
+    doc_files = request.files.getall('doc_files[]')
     for f in doc_files:
+        print f.filename
         name, ext = os.path.splitext(f.filename)
-        if ext == '.txt':
+        if ext == '.txt' or ext == '.json':
             f.save(doc_dir)
 
     stop_dir = input_dir + os.sep + 'stop'
     os.makedirs(stop_dir)
-    stop_files = request.files.getall('stop_files')
+    stop_files = request.files.getall('stop_files[]')
     for f in stop_files:
         name, ext = os.path.splitext(f.filename)
         if ext == '.txt':
@@ -36,7 +34,7 @@ def result():
 
     regex_dir = input_dir + os.sep + 'regex'
     os.makedirs(regex_dir)
-    regex_files = request.files.getall('regex_files')
+    regex_files = request.files.getall('regex_files[]')
     for f in regex_files:
         name, ext = os.path.splitext(f.filename)
         if ext == '.txt':
@@ -55,12 +53,22 @@ def result():
         if request.forms.get('ktag' + str(i)):
             keyword_tags.append(request.forms.get('ktag' + str(i)))
 
-    _, keyword_list, frame_list = generator.generate(dlen=10, ktags=keyword_tags,
-            wdir=window_direction, wsize=window_size, ftags=frame_tags,
-            input_dir=input_dir, output_dir=output_dir)
+    _, keyword_list, frame_list = generator.generate(dlen=10,
+            ktags=keyword_tags, wdir=window_direction, wsize=window_size,
+            ftags=frame_tags, input_dir=input_dir, output_dir=None)
 
-    return template('web' + os.sep + 'results',
-            keywords=keyword_list.keywords, frames=frame_list.frames)
+    data = {'frames': []}
+    for i, k in enumerate(keyword_list.keywords):
+        d = {}
+        d['keyword'] = {k[0].encode('utf-8'): k[1]}
+        d['frame'] = []
+        for f in frame_list.frames[i]:
+            d['frame'].append({f[0].encode('utf-8'): f[1]})
+        data['frames'].append(d)
+
+    shutil.rmtree(input_dir)
+
+    return json.dumps(data)
 
 
 if __name__ == '__main__':
