@@ -53,20 +53,29 @@ def index():
         if request.forms.get('ktag' + str(i)):
             keyword_tags.append(request.forms.get('ktag' + str(i)))
 
-    _, keyword_list, frame_list = generator.generate(dlen=10,
+    _, keyword_list, frame_list = generator.generate(dlen=10, kcount=5,
             ktags=keyword_tags, wdir=window_direction, wsize=window_size,
-            ftags=frame_tags, input_dir=input_dir, output_dir=None)
+            ftags=frame_tags, input_dir=input_dir, output_dir=None, fsize=8)
+
+    max_kscore = max([k[1] for k in keyword_list.keywords])
+    max_fscores = []
+    for frame in frame_list.frames:
+        if frame:
+            max_fscores.append(max([f[1] for f in frame]))
+    max_fscore = max(max_fscores)
 
     data = {'frames': []}
     for i, k in enumerate(keyword_list.keywords):
         d = {}
-        d['keyword'] = {k[0].encode('utf-8'): k[1]}
+        d['keyword'] = {k[0].encode('utf-8'): k[1] / max_kscore}
         d['frame'] = []
         for f in frame_list.frames[i]:
-            d['frame'].append({f[0].encode('utf-8'): f[1]})
+            d['frame'].append({f[0].encode('utf-8'): f[1] / max_fscore})
         data['frames'].append(d)
 
     shutil.rmtree(input_dir)
+
+    print data
 
     return json.dumps(data)
 
