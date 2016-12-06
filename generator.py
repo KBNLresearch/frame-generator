@@ -33,10 +33,17 @@ def generate(gtype='frames', dlen=0, pos=True, tcount=10, tsize=10, mallet=None,
             kmodel='lda', kcount=10, ktags=[], wdir=None, wsize=5, fsize=10,
             ftags=[], input_dir='input', output_dir='output'):
 
-    # Create output directory
+    abs_path = os.path.dirname(os.path.realpath(__file__))
+
+    # Create input, output directory
+    if input_dir == 'input':
+        input_dir = abs_path + os.sep + input_dir
+        print input_dir
     if output_dir == 'output':
+        output_dir = abs_path + os.sep + output_dir
         output_dir += os.sep + str(int(time.time()))
         os.makedirs(output_dir)
+        print output_dir
 
     # Save settings
     if output_dir:

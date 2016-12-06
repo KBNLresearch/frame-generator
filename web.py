@@ -12,7 +12,8 @@ from bottle import post, request, route, run
 @post('/')
 def index():
 
-    input_dir = 'input' + os.sep + str(int(time.time()))
+    abs_path = os.path.dirname(os.path.realpath(__file__))
+    input_dir = abs_path + os.sep + 'input' + os.sep + str(int(time.time()))
     os.makedirs(input_dir)
 
     doc_dir = input_dir + os.sep + 'docs'
@@ -75,11 +76,11 @@ def index():
 
     shutil.rmtree(input_dir)
 
-    print data
+    print json.dumps(data)
 
     return json.dumps(data)
 
 
 if __name__ == '__main__':
-    run(host='localhost', port=8080)
+    run(host='localhost', port=8091)
 
