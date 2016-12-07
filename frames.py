@@ -87,5 +87,5 @@ class FrameList(object):
             for i, frame in enumerate(self.frames):
                 row = [self.keyword_list.keywords[i][0]] + [f[0] for f in frame]
                 csv_writer.writerow([r.encode('utf-8') for r in row])
-                csv_writer.writerow(['--'] + [str(f[1]) for f in frame])
-
+                csv_writer.writerow([self.keyword_list.keywords[i][1]] +
+                        [str(f[1]) for f in frame])

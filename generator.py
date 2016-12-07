@@ -38,12 +38,10 @@ def generate(gtype='frames', dlen=0, pos=True, tcount=10, tsize=10, mallet=None,
     # Create input, output directory
     if input_dir == 'input':
         input_dir = abs_path + os.sep + input_dir
-        print input_dir
     if output_dir == 'output':
         output_dir = abs_path + os.sep + output_dir
         output_dir += os.sep + str(int(time.time()))
         os.makedirs(output_dir)
-        print output_dir
 
     # Save settings
     if output_dir:
@@ -62,7 +60,7 @@ def generate(gtype='frames', dlen=0, pos=True, tcount=10, tsize=10, mallet=None,
         return topic_list, None, None
 
     # Generate keywords based on tf-idf scores
-    if gtype == 'tf-idf':
+    if kmodel == 'tf-idf':
         tfidf_list = models.TfIdfList(doc_reader)
         keyword_list = keywords.KeywordList(doc_reader, kcount, ktags,
                 tfidf_list=tfidf_list)
