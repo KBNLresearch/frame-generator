@@ -12,73 +12,81 @@ from bottle import post, request, route, run
 @post('/')
 def index():
 
-    abs_path = os.path.dirname(os.path.realpath(__file__))
-    input_dir = abs_path + os.sep + 'input' + os.sep + str(int(time.time()))
-    os.makedirs(input_dir)
+    try:
+        abs_path = os.path.dirname(os.path.realpath(__file__))
+        input_dir = abs_path + os.sep + 'input' + os.sep + str(int(time.time()))
+        os.makedirs(input_dir)
 
-    doc_dir = input_dir + os.sep + 'docs'
-    os.makedirs(doc_dir)
-    doc_files = request.files.getall('doc_files[]')
-    for f in doc_files:
-        print f.filename
-        name, ext = os.path.splitext(f.filename)
-        if ext == '.txt' or ext == '.json':
-            f.save(doc_dir)
+        doc_dir = input_dir + os.sep + 'docs'
+        os.makedirs(doc_dir)
+        doc_files = request.files.getall('doc_files[]')
+        for f in doc_files:
+            print f.filename
+            name, ext = os.path.splitext(f.filename)
+            if ext == '.txt' or ext == '.json':
+                f.save(doc_dir)
 
-    stop_dir = input_dir + os.sep + 'stop'
-    os.makedirs(stop_dir)
-    stop_files = request.files.getall('stop_files[]')
-    for f in stop_files:
-        name, ext = os.path.splitext(f.filename)
-        if ext == '.txt':
-            f.save(stop_dir)
+        stop_dir = input_dir + os.sep + 'stop'
+        os.makedirs(stop_dir)
+        stop_files = request.files.getall('stop_files[]')
+        for f in stop_files:
+            name, ext = os.path.splitext(f.filename)
+            if ext == '.txt':
+                f.save(stop_dir)
 
-    regex_dir = input_dir + os.sep + 'regex'
-    os.makedirs(regex_dir)
-    regex_files = request.files.getall('regex_files[]')
-    for f in regex_files:
-        name, ext = os.path.splitext(f.filename)
-        if ext == '.txt':
-            f.save(regex_dir)
+        regex_dir = input_dir + os.sep + 'regex'
+        os.makedirs(regex_dir)
+        regex_files = request.files.getall('regex_files[]')
+        for f in regex_files:
+            name, ext = os.path.splitext(f.filename)
+            if ext == '.txt':
+                f.save(regex_dir)
 
-    window_size = int(request.forms.get('window_size'))
-    window_direction = request.forms.get('window_direction')
+        window_size = int(request.forms.get('window_size'))
+        window_direction = request.forms.get('window_direction')
 
-    frame_tags = []
-    for i in range(1, 13):
-        if request.forms.get('ftag' + str(i)):
-            frame_tags.append(request.forms.get('ftag' + str(i)))
+        frame_tags = []
+        for i in range(1, 13):
+            if request.forms.get('ftag' + str(i)):
+                frame_tags.append(request.forms.get('ftag' + str(i)))
 
-    keyword_tags = []
-    for i in range(1, 13):
-        if request.forms.get('ktag' + str(i)):
-            keyword_tags.append(request.forms.get('ktag' + str(i)))
+        keyword_tags = []
+        for i in range(1, 13):
+            if request.forms.get('ktag' + str(i)):
+                keyword_tags.append(request.forms.get('ktag' + str(i)))
 
-    _, keyword_list, frame_list = generator.generate(dlen=10, kcount=5,
-            ktags=keyword_tags, wdir=window_direction, wsize=window_size,
-            ftags=frame_tags, input_dir=input_dir, output_dir=None, fsize=8)
+        _, keyword_list, frame_list = generator.generate(dlen=10, kcount=5,
+                ktags=keyword_tags, wdir=window_direction, wsize=window_size,
+                ftags=frame_tags, input_dir=input_dir, output_dir=None, fsize=8)
 
-    max_kscore = max([k[1] for k in keyword_list.keywords])
-    max_fscores = []
-    for frame in frame_list.frames:
-        if frame:
-            max_fscores.append(max([f[1] for f in frame]))
-    max_fscore = max(max_fscores)
+        max_kscore = max([k[1] for k in keyword_list.keywords])
+        max_fscores = []
+        for frame in frame_list.frames:
+            if frame:
+                max_fscores.append(max([f[1] for f in frame]))
+        max_fscore = max(max_fscores)
 
-    data = {'frames': []}
-    for i, k in enumerate(keyword_list.keywords):
-        d = {}
-        d['keyword'] = {k[0].encode('utf-8'): k[1] / max_kscore}
-        d['frame'] = []
-        for f in frame_list.frames[i]:
-            d['frame'].append({f[0].encode('utf-8'): f[1] / max_fscore})
-        data['frames'].append(d)
+        data = {'frames': []}
+        for i, k in enumerate(keyword_list.keywords):
+            d = {}
+            d['keyword'] = {k[0].encode('utf-8'): k[1] / max_kscore}
+            d['frame'] = []
+            for f in frame_list.frames[i]:
+                d['frame'].append({f[0].encode('utf-8'): f[1] / max_fscore})
+            data['frames'].append(d)
 
-    shutil.rmtree(input_dir)
+        result = json.dumps(data)
 
-    print json.dumps(data)
+    except Exception as e:
+        result = json.dumps({'error': repr(e)})
 
-    return json.dumps(data)
+    finally:
+        if 'input_dir' in locals():
+            if os.path.isdir(input_dir):
+                shutil.rmtree(input_dir)
+
+    print result
+    return result
 
 
 if __name__ == '__main__':
