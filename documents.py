@@ -13,7 +13,7 @@ import urllib
 
 from segtok import segmenter, tokenizer
 
-FROG_URL = 'http://kbresearch.nl/frog/?text='
+FROG_URL = 'http://kbresearch.nl/frogger/?'
 
 
 class DocumentReader(object):
@@ -103,7 +103,8 @@ class DocumentReader(object):
                         for sentence in sub_doc:
                             tokens += [t.lower() for t in
                                     tokenizer.word_tokenizer(sentence)]
-                    docs.append(tokens)
+                    if len(tokens):
+                        docs.append(tokens)
 
         for filename in [f for f in os.listdir(path) if f.endswith('.json')]:
             with open(path + '/' + filename) as f:
@@ -111,31 +112,44 @@ class DocumentReader(object):
                 docs += json.load(f)['docs']
 
         print('Number of (sub)documents: ' + str(len(docs)))
+        assert docs, 'No documents found'
+
         return docs
 
 
     def frogger(self, to_frog):
         tokens = []
         while len(to_frog):
+            batch_size = min(10, len(to_frog))
+            batch = ' '.join(to_frog[:batch_size])
+            query_string = urllib.urlencode({'text': batch.encode('utf-8')})
+
             i = 0
             data = None
-            batch_size = max(10, len(to_frog))
-            batch = ' '.join(to_frog[:batch_size]).encode('utf-8')
             while not data:
-                if i > 2 and batch_size > 1:
-                    print('Reducing batch_size ...')
-                    batch_size -= 1
-                    batch = ' '.join(to_frog[:batch_size]).encode('utf-8')
-                data = urllib.urlopen(FROG_URL + batch).read().decode('utf-8')
-                if not data:
-                    print('Frog data not found, retrying ...')
-                    time.sleep(5)
-                    i += 1
-            new_tokens = [line.split('\t') for line in data.split('\n') if
-                    len(line)]
-            tokens += [t[2].lower() + '/' + t[4].split('(')[0] for t in
-                    new_tokens if len(t) == 10]
-            to_frog = to_frog[batch_size:]
+                try:
+                    data = urllib.urlopen(FROG_URL + query_string)
+                    data = data.read().decode('utf-8')
+                except IOError:
+                    if i < 2:
+                        print('Frog data not found, retrying ...')
+                        time.sleep(5)
+                        i += 1
+                    else:
+                        print('Frog data not found, skipping document!')
+                        return []
+
+            new_tokens = [line.split('\t') for line in data.split('\n')
+                    if len(line)]
+            try:
+                assert len(new_tokens[0]) == 10, 'Frog data invalid'
+                tokens += [t[2].lower() + '/' + t[4].split('(')[0] for t in
+                        new_tokens if len(t) == 10]
+            except AssertionError:
+                print('Frog data invalid, skipping batch!')
+            finally:
+                to_frog = to_frog[batch_size:]
+
         return tokens
 
 
