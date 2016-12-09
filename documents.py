@@ -13,7 +13,7 @@ import urllib
 
 from segtok import segmenter, tokenizer
 
-FROG_URL = 'http://kbresearch.nl/frogger/?'
+FROG_URL = 'http://www.kbresearch.nl/frogger/?'
 
 
 class DocumentReader(object):

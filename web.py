@@ -21,7 +21,6 @@ def index():
         os.makedirs(doc_dir)
         doc_files = request.files.getall('doc_files[]')
         for f in doc_files:
-            print f.filename
             name, ext = os.path.splitext(f.filename)
             if ext == '.txt' or ext == '.json':
                 f.save(doc_dir)
