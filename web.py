@@ -69,9 +69,9 @@ def index():
         for i, k in enumerate(keyword_list.keywords):
             d = {}
             d['keyword'] = {k[0].encode('utf-8'): k[1] / max_kscore}
-            d['frame'] = []
+            d['frame'] = {}
             for f in frame_list.frames[i]:
-                d['frame'].append({f[0].encode('utf-8'): f[1] / max_fscore})
+                d['frame'][f[0].encode('utf-8')] = f[1] / max_fscore
             data['frames'].append(d)
 
         result = json.dumps(data)
