@@ -20,6 +20,8 @@ class DocumentReader(object):
 
     def __init__(self, input_dir, doc_length=0, pos_tag=True):
 
+        self.log = []
+
         self.regex_dir = input_dir + os.sep + 'regex'
         self.doc_dir = input_dir + os.sep + 'docs'
         self.stop_dir = input_dir + os.sep + 'stop'
@@ -98,7 +100,7 @@ class DocumentReader(object):
                 for sub_doc in sub_docs:
                     tokens = []
                     if self.pos_tag:
-                        tokens += self.frogger(sub_doc)
+                        tokens += self.frogger(sub_doc, filename)
                     else:
                         for sentence in sub_doc:
                             tokens += [t.lower() for t in
@@ -117,7 +119,8 @@ class DocumentReader(object):
         return docs
 
 
-    def frogger(self, to_frog):
+    def frogger(self, to_frog, filename):
+
         tokens = []
         while len(to_frog):
             batch_size = min(10, len(to_frog))
@@ -133,10 +136,12 @@ class DocumentReader(object):
                 except IOError:
                     if i < 2:
                         print('Frog data not found, retrying ...')
-                        time.sleep(5)
+                        time.sleep(10)
                         i += 1
                     else:
                         print('Frog data not found, skipping document!')
+                        self.log.append('Frog data not found for (part of): ' +
+                                filename)
                         return []
 
             new_tokens = [line.split('\t') for line in data.split('\n')
@@ -146,9 +151,11 @@ class DocumentReader(object):
                 tokens += [t[2].lower() + '/' + t[4].split('(')[0] for t in
                         new_tokens if len(t) == 10]
             except AssertionError:
-                print('Frog data invalid, skipping batch!')
-            finally:
-                to_frog = to_frog[batch_size:]
+                print('Frog data invalid, skipping document!')
+                self.log.append('Frog data invalid for (part of): ' + filename)
+                return []
+
+            to_frog = to_frog[batch_size:]
 
         return tokens
 
@@ -201,4 +208,7 @@ class DocumentReader(object):
         with io.open(output_dir + os.sep + 'docs.json', 'w',
                 encoding='utf-8') as f:
             f.write(unicode(json.dumps(data, ensure_ascii=False)))
-
+        if self.log:
+            with open(output_dir + os.sep + 'log' + '.txt', 'w') as f:
+                for line in self.log:
+                    f.write(line + '\n')
