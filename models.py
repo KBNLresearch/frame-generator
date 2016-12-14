@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import csv
+import unicodecsv as csv
 import gensim
 import os
-
 
 class TopicList(object):
 
@@ -35,9 +34,9 @@ class TopicList(object):
 
     def save_topics(self, dir_name):
         with open(dir_name + os.sep + 'topics' + '.csv', 'wb') as f:
-            csv_writer = csv.writer(f, delimiter='\t')
+            csv_writer = csv.writer(f, delimiter='\t', encoding='utf-8')
             for topic in self.topics:
-                csv_writer.writerow([t[1].encode('utf-8') for t in topic])
+                csv_writer.writerow([t[1] for t in topic])
                 csv_writer.writerow([str(t[0]) for t in topic])
 
 

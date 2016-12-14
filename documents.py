@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import csv
 import gensim
 import io
 import json
@@ -14,7 +13,6 @@ import urllib
 from segtok import segmenter, tokenizer
 
 FROG_URL = 'http://www.kbresearch.nl/frogger/?'
-
 
 class DocumentReader(object):
 

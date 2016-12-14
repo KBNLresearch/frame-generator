@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import csv
+import unicodecsv as csv
 import gensim
 import math
 import operator
 import os
-
 
 class KeywordList(object):
 
@@ -76,7 +75,7 @@ class KeywordList(object):
 
     def save_keywords(self, dir_name):
         with open(dir_name + os.sep + 'keywords' + '.csv', 'wb') as f:
-            csv_writer = csv.writer(f, delimiter='\t')
+            csv_writer = csv.writer(f, delimiter='\t', encoding='utf-8')
             for k in self.keywords:
-                csv_writer.writerow([k[0].encode('utf-8'), str(k[1])])
+                csv_writer.writerow([k[0], str(k[1])])
 

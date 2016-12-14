@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import csv
+import unicodecsv as csv
 import math
 import operator
 import os
-
 
 class FrameList(object):
 
@@ -83,9 +82,9 @@ class FrameList(object):
 
     def save_frames(self, dir_name):
         with open(dir_name + os.sep + 'frames' + '.csv', 'wb') as f:
-            csv_writer = csv.writer(f, delimiter='\t')
+            csv_writer = csv.writer(f, delimiter='\t', encoding='utf-8')
             for i, frame in enumerate(self.frames):
-                row = [self.keyword_list.keywords[i][0]] + [f[0] for f in frame]
-                csv_writer.writerow([r.encode('utf-8') for r in row])
+                csv_writer.writerow([self.keyword_list.keywords[i][0]] +
+                        [f[0] for f in frame])
                 csv_writer.writerow([self.keyword_list.keywords[i][1]] +
                         [str(f[1]) for f in frame])

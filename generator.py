@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import argparse
-import csv
+import unicodecsv as csv
 import documents
 import frames
 import keywords
@@ -24,7 +24,7 @@ def save_settings(args, output_dir):
             output_args += ['wdir', 'wsize', 'fsize', 'ftags']
 
     with open(output_dir + os.sep + 'settings' + '.csv', 'wb') as f:
-        csv_writer = csv.writer(f, delimiter='\t')
+        csv_writer = csv.writer(f, delimiter='\t', encoding='utf-8')
         for arg in output_args:
             csv_writer.writerow([arg, str(args[arg])])
 
