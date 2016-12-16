@@ -19,7 +19,7 @@ class TopicList(object):
             print('Generating Mallet LDA model ...')
             lda = gensim.models.wrappers.LdaMallet(mallet_path,
                     num_topics=num_topics, corpus=self.doc_reader.corpus,
-                    id2word=self.doc_reader.dictionary)
+                    id2word=self.doc_reader.dictionary, workers=2)
             self.topics = lda.show_topics(num_topics=num_topics,
                     num_words=num_words, formatted=False)
         else:
