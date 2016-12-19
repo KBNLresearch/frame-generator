@@ -93,6 +93,8 @@ class KeywordList(object):
 
     def save_keywords(self, dir_name):
         with open(dir_name + os.sep + 'keywords' + '.csv', 'wb') as f:
+            # Manually encode a BOM, utf-8-sig didn't work with unicodecsv
+            f.write(u'\ufeff'.encode('utf8'))
             csv_writer = csv.writer(f, delimiter='\t', encoding='utf-8')
             for k in self.keywords:
                 csv_writer.writerow([k[0], str(k[1])])

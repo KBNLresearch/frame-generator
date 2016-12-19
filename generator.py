@@ -42,6 +42,8 @@ def save_settings(args, output_dir):
             output_args += ['wdir', 'wsize', 'fsize', 'ftags']
 
     with open(output_dir + os.sep + 'settings' + '.csv', 'wb') as f:
+        # Manually encode a BOM, utf-8-sig didn't work with unicodecsv
+        f.write(u'\ufeff'.encode('utf8'))
         csv_writer = csv.writer(f, delimiter='\t', encoding='utf-8')
         for arg in output_args:
             csv_writer.writerow([arg, str(args[arg])])

@@ -52,6 +52,8 @@ class TopicList(object):
 
     def save_topics(self, dir_name):
         with open(dir_name + os.sep + 'topics' + '.csv', 'wb') as f:
+            # Manually encode a BOM, utf-8-sig didn't work with unicodecsv
+            f.write(u'\ufeff'.encode('utf8'))
             csv_writer = csv.writer(f, delimiter='\t', encoding='utf-8')
             for topic in self.topics:
                 csv_writer.writerow([t[1] for t in topic])

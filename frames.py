@@ -100,6 +100,8 @@ class FrameList(object):
 
     def save_frames(self, dir_name):
         with open(dir_name + os.sep + 'frames' + '.csv', 'wb') as f:
+            # Manually encode a BOM, utf-8-sig didn't work with unicodecsv
+            f.write(u'\ufeff'.encode('utf8'))
             csv_writer = csv.writer(f, delimiter='\t', encoding='utf-8')
             for i, frame in enumerate(self.frames):
                 csv_writer.writerow([self.keyword_list.keywords[i][0]] +
