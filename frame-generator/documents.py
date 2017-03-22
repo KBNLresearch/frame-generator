@@ -28,6 +28,7 @@ import sys
 import time
 import urllib
 
+from lxml import etree
 from segtok import segmenter
 from segtok import tokenizer
 
@@ -99,10 +100,18 @@ class DocumentReader(object):
         '''
         print('Processing documents ...')
         docs = []
-        for filename in [f for f in os.listdir(path) if f.endswith('.txt')]:
+        for filename in [f for f in os.listdir(path) if f[-4:] in ['.txt',
+                '.xml']]:
             with open(path + '/' + filename) as f:
                 print('Processing file: ' + filename)
-                doc = self.decode(f.read())
+
+                # Remove xml tags and decode
+                if filename.endswith('.xml'):
+                    xml = etree.fromstring(f.read())
+                    text = etree.tostring(xml, encoding='utf-8', method='text')
+                    doc = text.decode('utf-8')
+                else:
+                    doc = self.decode(f.read())
 
                 # Process user provided regular expressions
                 for regex in self.regex_list:

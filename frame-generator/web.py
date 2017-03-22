@@ -46,7 +46,7 @@ def index():
         doc_files = request.files.getall('doc_files[]')
         for f in doc_files:
             name, ext = os.path.splitext(f.filename)
-            if ext == '.txt' or ext == '.json':
+            if ext in ['.txt', '.json', '.xml']:
                 f.save(doc_dir)
 
         stop_dir = input_dir + os.sep + 'stop'
