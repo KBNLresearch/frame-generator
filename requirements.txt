@@ -1,0 +1,16 @@
+appdirs==1.4.3
+boto==2.46.1
+bottle==0.12.13
+bz2file==0.98
+gensim==1.0.1
+lxml==3.7.3
+numpy==1.12.1
+packaging==16.8
+pyparsing==2.2.0
+regex==2017.2.8
+requests==2.13.0
+scipy==0.19.0
+segtok==1.5.4
+six==1.10.0
+smart-open==1.5.1
+unicodecsv==0.14.1
