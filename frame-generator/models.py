@@ -44,16 +44,15 @@ class TopicList(object):
             lda = gensim.models.wrappers.LdaMallet(mallet_path,
                     num_topics=num_topics, corpus=self.doc_reader.corpus,
                     id2word=self.doc_reader.dictionary, workers=2)
-            self.topics = lda.show_topics(num_topics=num_topics,
-                    num_words=num_words, formatted=False)
         else:
             print('Generating Gensim LDA model ...')
             lda = gensim.models.LdaModel(corpus=self.doc_reader.corpus,
                     id2word=self.doc_reader.dictionary, num_topics=num_topics,
                     alpha='auto', chunksize=1, eval_every=1)
-            gensim_topics = [t[1] for t in lda.show_topics(num_words=num_words,
-                    num_topics=num_topics, formatted=False)]
-            self.topics = [[(i[1], i[0]) for i in t] for t in gensim_topics]
+
+        topics = [t[1] for t in lda.show_topics(num_words=num_words,
+            num_topics=num_topics, formatted=False)]
+        self.topics = [[(i[1], i[0]) for i in t] for t in topics]
 
     def save_topics(self, dir_name):
         '''
