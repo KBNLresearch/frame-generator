@@ -28,22 +28,29 @@ import sys
 import time
 import urllib
 
-from segtok import segmenter, tokenizer
+from segtok import segmenter
+from segtok import tokenizer
 
 FROG_URL = 'http://www.kbresearch.nl/frogger/?'
 
+
 class DocumentReader(object):
+    '''
+    Process input documents.
+    '''
 
     def __init__(self, input_dir, doc_length=0, pos_tag=True):
-
-        self.log = []
-
+        '''
+        Create regex list, stop word list, document list, dictionary and corpus.
+        '''
         self.regex_dir = input_dir + os.sep + 'regex'
         self.doc_dir = input_dir + os.sep + 'docs'
         self.stop_dir = input_dir + os.sep + 'stop'
 
         self.doc_length = doc_length
         self.pos_tag = pos_tag
+
+        self.log = []
 
         self.regex_list = self.get_regex(self.regex_dir)
         self.stop_list = self.get_stop_words(self.stop_dir)
@@ -52,8 +59,10 @@ class DocumentReader(object):
         self.dictionary = self.get_dictionary(self.doc_list, self.stop_list)
         self.corpus = self.get_corpus()
 
-
     def get_regex(self, path):
+        '''
+        Create regex list from input documents.
+        '''
         print('Processing regular expressions ...')
         regex_list = []
         for filename in [f for f in os.listdir(path) if f[-4:] in ['.txt',
@@ -70,8 +79,10 @@ class DocumentReader(object):
         print('Number of regular expressions: ' + str(len(regex_list)))
         return regex_list
 
-
     def get_stop_words(self, path):
+        '''
+        Create stop word list from input documents.
+        '''
         print('Processing stop words ...')
         stop_list = []
         for filename in [f for f in os.listdir(path) if f.endswith('.txt')]:
@@ -82,8 +93,10 @@ class DocumentReader(object):
         print('Number of stop words: ' + str(len(stop_list)))
         return stop_list
 
-
     def get_documents(self, path, doc_length):
+        '''
+        Create document list from input documents.
+        '''
         print('Processing documents ...')
         docs = []
         for filename in [f for f in os.listdir(path) if f.endswith('.txt')]:
@@ -134,9 +147,10 @@ class DocumentReader(object):
 
         return docs
 
-
     def frogger(self, to_frog, filename):
-
+        '''
+        Process document with Frog web service.
+        '''
         tokens = []
         while len(to_frog):
             batch_size = min(10, len(to_frog))
@@ -175,8 +189,10 @@ class DocumentReader(object):
 
         return tokens
 
-
     def get_dictionary(self, doc_list, stop_list):
+        '''
+        Create dictionary from document and stop word lists.
+        '''
         print('Generating dictionary ...')
         dictionary = gensim.corpora.Dictionary(self.iter_docs(doc_list,
                 stop_list))
@@ -188,15 +204,19 @@ class DocumentReader(object):
         print('Number of unique tokens in dictionary: ' + str(num_tokens))
         return dictionary
 
-
     def get_corpus(self):
+        '''
+        Create corpus.
+        '''
         print('Generating corpus ...')
         corpus = [self.dictionary.doc2bow(text) for text in
                 self.iter_docs(self.doc_list, self.stop_list)]
         return corpus
 
-
     def iter_docs(self, doc_list, stop_list):
+        '''
+        Generate tokens from document and stop word lists.
+        '''
         unwanted_tags = ['LET', 'LID', 'VZ', 'VG']
         for doc in doc_list:
             if self.pos_tag:
@@ -206,8 +226,10 @@ class DocumentReader(object):
             else:
                 yield (t for t in doc if t not in stop_list and len(t) > 2)
 
-
     def decode(self, s):
+        '''
+        Decode utf-8 and iso-8859-1 encoded strings.
+        '''
         encodings = ['utf-8', 'iso-8859-1']
         decoded = ''
         for e in encodings:
@@ -218,8 +240,10 @@ class DocumentReader(object):
                 continue
         return decoded
 
-
     def save_docs(self, output_dir):
+        '''
+        Save processed documents to file.
+        '''
         data = {'docs': self.doc_list}
         with io.open(output_dir + os.sep + 'docs.json', 'w',
                 encoding='utf-8') as f:

@@ -19,16 +19,22 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-import unicodecsv as csv
 import math
 import operator
 import os
+import unicodecsv as csv
+
 
 class FrameList(object):
+    '''
+    List of generated frames.
+    '''
 
     def __init__(self, doc_reader, keyword_list, window_direction=None,
         window_size=5, frame_size=10, frame_tags=[]):
-
+        '''
+        Set FrameList attributes.
+        '''
         self.doc_reader = doc_reader
         self.keyword_list = keyword_list
         self.window_direction = window_direction
@@ -39,8 +45,10 @@ class FrameList(object):
         self.frames = self.generate_frames(self.keyword_list.keywords,
                 self.doc_reader.doc_list)
 
-
     def generate_frames(self, keywords, docs):
+        '''
+        Generate frames.
+        '''
         print('Generating frames ...')
 
         frames = []
@@ -89,16 +97,20 @@ class FrameList(object):
 
         return frames
 
-
     def print_frames(self):
+        '''
+        Print generated frames.
+        '''
         print('Keywords and frames generated:')
         for i, k in enumerate(self.keyword_list.keywords):
             print('(' + str(i + 1) + ') ' + k[0] + ' [' + str(k[1]) + ']')
             print(', '.join([f[0] + ' (' + str(f[1]) + ')' for f in
                     self.frames[i]]))
 
-
     def save_frames(self, dir_name):
+        '''
+        Save generated frames to file.
+        '''
         with open(dir_name + os.sep + 'frames' + '.csv', 'wb') as f:
             # Manually encode a BOM, utf-8-sig didn't work with unicodecsv
             f.write(u'\ufeff'.encode('utf8'))

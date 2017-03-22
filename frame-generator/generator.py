@@ -20,7 +20,6 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 import argparse
-import unicodecsv as csv
 import documents
 import frames
 import keywords
@@ -28,10 +27,13 @@ import models
 import os
 import sys
 import time
+import unicodecsv as csv
 
 
 def save_settings(args, output_dir):
-
+    '''
+    Save settings to file.
+    '''
     if args['gtype'] == 'topics':
         output_args = ['gtype', 'dlen', 'tcount', 'tsize', 'mallet']
     elif args['gtype'] == 'keywords' or args['gtype'] == 'frames':
@@ -48,11 +50,12 @@ def save_settings(args, output_dir):
         for arg in output_args:
             csv_writer.writerow([arg, str(args[arg])])
 
-
 def generate(gtype='frames', dlen=0, pos=True, tcount=10, tsize=10, mallet=None,
             kmodel='lda', kcount=10, ktags=[], wdir=None, wsize=5, fsize=10,
             ftags=[], input_dir='input', output_dir='output'):
-
+    '''
+    Generate topics, keywords or frames.
+    '''
     # Create input, output directory
     if output_dir == 'output':
         output_dir += os.sep + str(int(time.time()))
@@ -103,7 +106,6 @@ def generate(gtype='frames', dlen=0, pos=True, tcount=10, tsize=10, mallet=None,
         if output_dir:
             frame_list.save_frames(output_dir)
         return None, keyword_list, frame_list
-
 
 if __name__ == '__main__':
     if sys.stdout.encoding != 'UTF-8':
@@ -163,4 +165,3 @@ if __name__ == '__main__':
         keyword_list.print_keywords()
     elif topic_list:
         topic_list.print_topics()
-

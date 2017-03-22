@@ -19,17 +19,23 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-import unicodecsv as csv
 import gensim
 import math
 import operator
 import os
+import unicodecsv as csv
+
 
 class KeywordList(object):
+    '''
+    List of generated keywords.
+    '''
 
     def __init__(self, doc_reader, num_keywords=10, keyword_tags=[],
             topic_list=None, tfidf_list=None):
-
+        '''
+        Set KeywordList attributes.
+        '''
         self.doc_reader = doc_reader
         self.num_keywords = num_keywords
         self.keyword_tags = keyword_tags
@@ -38,8 +44,10 @@ class KeywordList(object):
 
         self.keywords = self.generate_keywords()
 
-
     def generate_keywords(self):
+        '''
+        Generate keywords.
+        '''
         print('Generating keywords ...')
         keywords = {}
 
@@ -84,18 +92,21 @@ class KeywordList(object):
 
         return sorted_keywords[:self.num_keywords]
 
-
     def print_keywords(self):
+        '''
+        Print generated keywords.
+        '''
         print('Keywords generated:')
         for i, k in enumerate(self.keywords):
             print('(' + str(i + 1) + ') ' + k[0] + ' [' + str(k[1]) + ']')
 
-
     def save_keywords(self, dir_name):
+        '''
+        Save generated keywords to file.
+        '''
         with open(dir_name + os.sep + 'keywords' + '.csv', 'wb') as f:
             # Manually encode a BOM, utf-8-sig didn't work with unicodecsv
             f.write(u'\ufeff'.encode('utf8'))
             csv_writer = csv.writer(f, delimiter='\t', encoding='utf-8')
             for k in self.keywords:
                 csv_writer.writerow([k[0], str(k[1])])
-

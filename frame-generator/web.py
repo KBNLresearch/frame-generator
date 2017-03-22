@@ -25,11 +25,17 @@ import os
 import shutil
 import time
 
-from bottle import post, request, route, run
+from bottle import post
+from bottle import request
+from bottle import route
+from bottle import run
+
 
 @post('/')
 def index():
-
+    '''
+    Generate requested frames and return as json response.
+    '''
     try:
         abs_path = os.path.dirname(os.path.realpath(__file__))
         input_dir = abs_path + os.sep + 'input' + os.sep + str(int(time.time()))
@@ -105,7 +111,5 @@ def index():
     print result
     return result
 
-
 if __name__ == '__main__':
     run(host='localhost', port=8091)
-
