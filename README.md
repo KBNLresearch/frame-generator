@@ -16,6 +16,11 @@ The Frame Generator was created in collaboration with prof. dr. Joris van Eijnat
 - Access and reuse the results of each processing stage as comma-separated values files
 - Use from the command line, as a Python library or web application
 
+## Requirements
+
+- Python 2.7
+- Mallet 2.0.7
+
 ## Installation
 
 Clone or download the GitHub repository:
@@ -30,8 +35,6 @@ Install the required Python packages:
 $ cd frame-generator
 $ pip install -r requirements.txt
 ```
-
-The Frame Generator was tested with Python 2.7. In order to use the Mallet topic modelling option, Mallet 2.0.7 has to be installed locally.
 
 ## Usage
 
