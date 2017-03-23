@@ -127,4 +127,4 @@ By default the service is started at `http://localhost:8091/`.
 
 ## Demo
 
-An online demo, providing a graphical user interface to the Frame Generator’s main functionality and a basic visualization of the results, is available at [http://www.kbresearch.nl/frames/](http://www.kbresearch.nl/frames/).
+An online demo providing a graphical user interface to the Frame Generator’s main functionality and a basic visualization of the results is available at [http://www.kbresearch.nl/frames/](http://www.kbresearch.nl/frames/). The source code of the demo can be found [here](https://github.com/jlonij/frame-generator-gui).
