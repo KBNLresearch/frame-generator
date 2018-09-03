@@ -36,7 +36,7 @@ $ cd frame-generator
 $ pip install -r requirements.txt
 ```
 
-## Optional install Frog + Frog wapper (Frogger) locally.
+### Optional install Frog + Frog wapper (Frogger) locally.
 
 Since Frog causes heavy load-spike's on our infrastructure availability cannot be guaranteed.
 The endpoint to which frame-generator will try to connect is a demo sever,
@@ -50,12 +50,12 @@ See here: https://github.com/LanguageMachines/frog
 
 Start frog: 
 ```
-	$ frog -S 4096
+$ frog -S 4096
 ```
 Install Frog-wrapper:
 
 Place the directory frogger in your Apache2 www-root (/var/www/frogger/),
-it will use a .htaccess file to launch the application drom Apache.
+it will use a .htaccess file to launch the application from Apache.
 
 Test the wrapper without HTTP:
 
