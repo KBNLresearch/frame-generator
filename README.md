@@ -67,7 +67,7 @@ This should ouput some test text if all went well, now try the wrapper with HTTP
 ```
 $ curl -s http://localhost/frogger/?text="Dit is een test"
 ```
-This sould return some text-text.
+This sould return some test text.
 
 ## Usage
 
