@@ -35,6 +35,16 @@ Install the required Python packages:
 $ cd frame-generator
 $ pip install -r requirements.txt
 ```
+
+## Optional install Frog + Frog wapper (Frogger) locally.
+
+Since Frog causes heavy load-spike's on our infrastructure availability cannot be guaranteed.
+The endpoint to which frame-generator will try to connect is a demo sever,
+which might be down, if you want to analyze a lot of data, change the endpoint
+here:
+
+https://github.com/KBNLresearch/frame-generator/blob/master/frame-generator/documents.py#L35
+
 Install Frog + Dependencies:
 See here: https://github.com/LanguageMachines/frog
 
@@ -43,14 +53,17 @@ Start frog:
 	$ frog -S 4096
 ```
 Install Frog-wrapper:
-Place the directory frogger in your www-root (/var/www/frogger/),
-See if the frog-wrapper can contact your local Frog service:
+
+Place the directory frogger in your Apache2 www-root (/var/www/frogger/),
+it will use a .htaccess file to launch the application drom Apache.
+
+Test the wrapper without HTTP:
 
 ```
-$ python frog.py
+$ mv frogger /var/www/; cd /var/www/frogger; python frog.py
 ```
 
-This should ouput some test-text if all went well, now try the wrapper with browser:
+This should ouput some test text if all went well, now try the wrapper with HTTP:
 ```
 $ curl -s http://localhost/frogger/?text="Dit is een test"
 ```
