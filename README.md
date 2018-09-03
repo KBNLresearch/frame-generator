@@ -35,6 +35,26 @@ Install the required Python packages:
 $ cd frame-generator
 $ pip install -r requirements.txt
 ```
+Install Frog + Dependencies:
+See here: https://github.com/LanguageMachines/frog
+
+Start frog: 
+```
+	$ frog -S 4096
+```
+Install Frog-wrapper:
+Place the directory frogger in your www-root (/var/www/frogger/),
+See if the frog-wrapper can contact your local Frog service:
+
+```
+$ python frog.py
+```
+
+This should ouput some test-text if all went well, now try the wrapper with browser:
+```
+$ curl -s http://localhost/frogger/?text="Dit is een test"
+```
+This sould return some text-text.
 
 ## Usage
 
