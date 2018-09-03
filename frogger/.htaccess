@@ -1,0 +1,12 @@
+<Files frog.py>
+    SetHandler wsgi-script
+    Options +ExecCGI
+</Files>
+
+RewriteEngine on
+RewriteBase /
+RewriteCond %{REQUEST_URI} !^/robots.txt
+RewriteCond %{REQUEST_URI} !^/static
+RewriteCond %{REQUEST_URI} !^(/.*)+frog.py
+RewriteRule ^(.*)$ /frogger/frog.py/$1 [PT]
+
